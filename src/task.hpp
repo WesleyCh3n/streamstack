@@ -1,17 +1,14 @@
 #pragma once
 
-#include "noncopyable.hpp"
-
 #include <future>
 #include <opencv2/core/mat.hpp>
 
+using Data = std::vector<cv::Mat>;
 class DetectionTask {
-  std::promise<std::vector<cv::Mat>> promise;
+  std::promise<Data> promise;
 
 public:
   cv::Mat mat;
-  std::future<std::vector<cv::Mat>> get_future() {
-    return promise.get_future();
-  };
-  void set_value(std::vector<cv::Mat> &&value) { promise.set_value(value); }
+  void set_value(Data &&value) { promise.set_value(std::move(value)); }
+  std::future<Data> get_future() { return promise.get_future(); };
 };

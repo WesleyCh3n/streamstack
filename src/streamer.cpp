@@ -72,24 +72,21 @@ void GPUStreamerThread::Impl::main_loop() {
       std::lock_guard<std::mutex> lock(frames_mutex_);
       cv::swap(frame, frames_[!frame_index_]);
     }
-    cout << "get: " << frame.size << '\n';
-    std::this_thread::sleep_for(500ms); // FPS control
-    if (!frame.empty()) {
-      cout << "ref: " << static_cast<void *>(&frame) << '\n';
-      cout << "out: " << static_cast<void *>(frame.data) << '\n';
-    }
+
     DetectionTask task;
     task.mat = frame;
     auto future = task.get_future();
     pipe_->detection_queue.try_enqueue(std::move(task));
 
     std::future_status status;
-    if ((status = future.wait_for(1s)) == std::future_status::ready) {
+    if ((status = future.wait_for(0.1s)) == std::future_status::ready) {
       auto mats = future.get();
-      for (auto mat : mats)
-        cout << mat << '\n';
+      cout << "deq result vec: " << mats.data() << '\n';
+      cout << "deq result vec[0]: " << static_cast<void *>(mats[0].data)
+           << '\n';
     }
     // TODO: full time loop
+    std::this_thread::sleep_for(500ms); // FPS control
   }
 }
 

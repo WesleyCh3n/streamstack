@@ -21,17 +21,17 @@ private:
     while (running_) {
       DetectionTask tasks[20];
       int count = queue_->try_dequeue_bulk(tasks, 20);
-      if (count > 0) {
-        cout << "count: " << count << '\n';
-        for (int i = 0; i < count; i++) {
-          cout << "queue mat: " << static_cast<void *>(tasks[i].mat.data)
-               << '\n';
-          std::vector<cv::Mat> mats = {cv::Mat::ones(4, 4, CV_8U)};
-          tasks[i].set_value(std::move(mats));
-        }
-      } else {
-        // wait some time
+      if (count == 0) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        continue;
+      }
+      cout << "count: " << count << '\n';
+      for (int i = 0; i < count; i++) {
+        Data mats = {cv::Mat::ones(4, 4, CV_8U)};
+        cout << "enq result vec: " << mats.data() << '\n';
+        cout << "enq result vec[0]: " << static_cast<void *>(mats[0].data)
+             << '\n';
+        tasks[i].set_value(std::move(mats));
       }
     }
   }
