@@ -14,11 +14,10 @@ public:
 };
 
 template <typename I, typename O> class Task {
-
   I input_;
   //   std::promise<O> output_promise;
   //
 public:
   Task(I &&input) : input_(std::move(input)) {}
-  I &&get_input() { return std::move(input_); }
+  [[__nodiscard__]] I get_input() { return std::move(input_); }
 };
