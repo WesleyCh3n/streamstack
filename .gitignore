@@ -1,3 +1,5 @@
 .cache
 build
 *.json
+3rdparty/*
+!3rdparty/opencv4.mk

@@ -15,6 +15,7 @@ class GPUStreamerThread::Impl {
   std::thread main_thread_;
   std::atomic<bool> running_{false};
   DataPipe *pipe_{nullptr};
+
   StreamerConfig config_;
   std::array<cv::Mat, 2> frames_;
   std::mutex frames_mutex_;

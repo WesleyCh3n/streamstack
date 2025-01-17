@@ -11,7 +11,7 @@ if (build_tests)
   enable_testing()
 
   add_executable(task test_task.cpp)
-  target_link_libraries(task PRIVATE gtest_main ${3rd_libs})
+  target_link_libraries(task PRIVATE gtest gmock gtest_main ${3rd_libs})
   target_include_directories(task PRIVATE ${CMAKE_SOURCE_DIR}/src/ ${3rd_incs})
   # using gtest
   gtest_discover_tests(task)

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 option(build_tests "build unit tests" ON)
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 4.10.0 EXACT REQUIRED PATHS /opt/opencv4.10.0/ NO_DEFAULT_PATH)
 
 add_executable(${CMAKE_PROJECT_NAME}
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
