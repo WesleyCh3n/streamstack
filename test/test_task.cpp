@@ -34,7 +34,7 @@ TEST_F(TaskTest, AssignVectorOwnership) {
   ASSERT_TRUE(before.empty());       // After move, 'before' should be empty
   ASSERT_EQ(before.data(), nullptr); // After move, 'before.data' should be null
 
-  InType after = task.get_input(); // 'task' should now own the unique_ptr
+  InType after(task.get_input()); // 'task' should now own the unique_ptr
   ASSERT_EQ(after.data(), before_addr);
   ASSERT_THAT(after, testing::ElementsAre(0, 1, 2));
 }
