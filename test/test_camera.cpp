@@ -1,11 +1,13 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <camera.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/cudacodec.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <thread>
+
+#include <camera.hpp>
+#include <cvutil.hpp>
 
 using namespace std::chrono_literals;
 
@@ -20,17 +22,46 @@ protected:
   void TearDown() override { mycam.reset(); }
 };
 
-TEST_F(CameraTest, RetrieveFrameHighFPS) {
-  const uint8_t fps = 30;
+TEST_F(CameraTest, RetrieveMatType) {
   cv::cuda::GpuMat frame;
-  cv::Mat cpu_frame;
-  for (int i = 0; i < fps; i++) {
+  mycam->retrieve(frame);
+  ASSERT_EQ(frame.type(), CV_8UC3);
+}
+
+TEST_F(CameraTest, RetrieveOneMinute) {
+  cv::cuda::GpuMat frame;
+
+  const uint8_t fps = 30;
+  const size_t second = 60;
+  const size_t total_fcount = fps * second;
+
+  for (int i = 0; i < total_fcount; i++) {
     mycam->retrieve(frame);
     ASSERT_FALSE(frame.empty());
-    cv::imwrite(std::string("frame-") + std::to_string(i) + ".jpg",
-                cv::Mat(frame));
+
     std::this_thread::sleep_for(std::chrono::milliseconds(1000 / fps));
   }
+}
+
+TEST_F(CameraTest, RetrieveFrameHighFPS) {
+  const uint8_t fps = 30;
+  const size_t second = 5;
+  const size_t total_fcount = fps * second;
+
+  cv::cuda::GpuMat frame;
+  std::array<cv::Mat, total_fcount> cpu_frame;
+
+  for (int i = 0; i < total_fcount; i++) {
+    mycam->retrieve(frame);
+    ASSERT_FALSE(frame.empty());
+
+    cpu_frame[i] = cv::Mat(frame);
+    ASSERT_FALSE(cpu_frame[i].empty());
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000 / fps));
+  }
+
+  util::create_mp4(cpu_frame, "retrieve-30fps.mp4", static_cast<double>(fps));
 }
 
 TEST_F(CameraTest, CameraFailedToOpened) {
