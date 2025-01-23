@@ -4,7 +4,7 @@ BUILD_TYPE ?= Release
 all:
 
 test: build/test/
-	ctest --output-on-failure --test-dir ./build/test/ --verbose
+	ctest  -E CameraTest* --output-on-failure --test-dir ./build/test/ --verbose
 
 coverage: build/
 	ctest --verbose -T Coverage --test-dir ./build/
