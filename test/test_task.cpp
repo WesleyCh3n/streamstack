@@ -15,42 +15,56 @@ class TaskTest : public testing::Test {};
 using std::unique_ptr;
 using std::vector;
 
-TEST_F(TaskTest, AssignUniquePtrOwnership) {
+TEST_F(TaskTest, SetRequestUniquePtrOwnership) {
   using InType = unique_ptr<int>;
   InType before = std::make_unique<int>(10);
   int *before_addr = before.get(); // address of the original pointer
-  Task<InType, void> task(std::move(before));
-  ASSERT_EQ(before, nullptr);      // After move, 'before' should be null
-  InType after = task.get_input(); // 'task' should now own the unique_ptr
+  Task<InType, void *> task;
+  task.set_request(std::move(before));
+  ASSERT_EQ(before, nullptr);        // After move, 'before' should be null
+  InType after = task.get_request(); // 'task' should now own the unique_ptr
   ASSERT_NE(after, nullptr);
   ASSERT_EQ(after.get(), before_addr);
 }
 
-TEST_F(TaskTest, AssignVectorOwnership) {
+TEST_F(TaskTest, SetRequestVectorOwnership) {
   using InType = vector<int>;
   InType before = {0, 1, 2};
   auto before_addr = before.data(); // address of the original pointer
-  Task<InType, void> task(std::move(before));
+  Task<InType, void *> task;
+  task.set_request(std::move(before));
   ASSERT_TRUE(before.empty());       // After move, 'before' should be empty
   ASSERT_EQ(before.data(), nullptr); // After move, 'before.data' should be null
 
-  InType after(task.get_input()); // 'task' should now own the unique_ptr
+  InType after(task.get_request()); // 'task' should now own the unique_ptr
   ASSERT_EQ(after.data(), before_addr);
   ASSERT_THAT(after, testing::ElementsAre(0, 1, 2));
 }
 
-TEST_F(TaskTest, AssignInputValidateValue) {
+TEST_F(TaskTest, RequestValidateValue) {
   auto before = std::make_unique<int>(10);
-  Task<unique_ptr<int>, unique_ptr<int>> task(std::move(before));
-  auto after = task.get_input();
+  Task<unique_ptr<int>, unique_ptr<int>> task;
+  task.set_request(std::move(before));
+  auto after = task.get_request();
   ASSERT_NE(after, nullptr);
   ASSERT_EQ(*after, 10);
 }
 
-TEST_F(TaskTest, AssignInputEmptyPtr) {
+TEST_F(TaskTest, SetRequestInputEmptyPtr) {
   auto empty_ptr = nullptr; // A nullptr
-  Task<unique_ptr<int>, unique_ptr<int>> task(std::move(empty_ptr));
-  ASSERT_EQ(task.get_input(), nullptr);
+  Task<unique_ptr<int>, unique_ptr<int>> task;
+  task.set_request(std::move(empty_ptr));
+  ASSERT_EQ(task.get_request(), nullptr);
+}
+
+TEST_F(TaskTest, SetResponseVoid) {
+  Task<void *, void *> task;
+  task.set_response(nullptr);
+}
+
+TEST_F(TaskTest, SetResponseMove) {
+  Task<void *, unique_ptr<int>> task;
+  task.set_response(nullptr);
 }
 
 TEST(TaskCollection, DetectionTaskPromiseAddrress) {
