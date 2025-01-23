@@ -16,17 +16,17 @@ struct StreamerConfig {
   StreamerConfig &&build() { throw std::logic_error("not implemented"); }
 };
 
-class GPUStreamerThread : public Streamer {
-  class Impl;
-  std::unique_ptr<Impl> impl_;
-
-public:
-  GPUStreamerThread(StreamerConfig, DataPipe *);
-  GPUStreamerThread(GPUStreamerThread &&) noexcept;
-  ~GPUStreamerThread() noexcept;
-  void stop() override;
-  bool is_running() override;
-};
+// class GPUStreamerThread : public Streamer {
+//   class Impl;
+//   std::unique_ptr<Impl> impl_;
+//
+// public:
+//   GPUStreamerThread(StreamerConfig, Datapipe *);
+//   GPUStreamerThread(GPUStreamerThread &&) noexcept;
+//   ~GPUStreamerThread() noexcept;
+//   void stop() override;
+//   bool is_running() override;
+// };
 
 // #include <condition_variable>
 // #include <deque>

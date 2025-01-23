@@ -1,12 +1,9 @@
 #pragma once
 
-#include "task.hpp"
-
 #include "concurrentqueue.h"
-#include "noncopyable.hpp"
 
-using DetectionQueue = moodycamel::ConcurrentQueue<DetectionTask>;
+template <typename T> using Datapipe = moodycamel::ConcurrentQueue<T>;
 
-struct DataPipe : public noncopyable {
-  DetectionQueue detection_queue;
-};
+// struct DataPipe : public noncopyable {
+//   DetectionQueue detection_queue;
+// };
