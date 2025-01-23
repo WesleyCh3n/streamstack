@@ -40,4 +40,7 @@ if (build_tests)
   add_test_target(camera test_camera.cpp
     LINK_LIBRARIES ${CMAKE_PROJECT_NAME}
   )
+  add_test_target(pipe test_pipe.cpp
+    LINK_LIBRARIES ${CMAKE_PROJECT_NAME}
+  )
 endif()
