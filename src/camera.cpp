@@ -33,9 +33,16 @@ public:
     camera_->grab();
     camera_->retrieve(frame);
   }
+  void retrieve(cv::Mat &frame) {
+    cv::cuda::GpuMat gpu_frame;
+    camera_->grab();
+    camera_->retrieve(gpu_frame);
+    gpu_frame.download(frame);
+  }
 };
 
 Camera::Camera(const std::string &url) : impl_(std::make_unique<Impl>(url)) {}
 Camera::~Camera() = default;
 
 void Camera::retrieve(cv::cuda::GpuMat &frame) { impl_->retrieve(frame); };
+void Camera::retrieve(cv::Mat &frame) { impl_->retrieve(frame); };

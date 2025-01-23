@@ -13,4 +13,5 @@ public:
   ~Camera();
 
   void retrieve(cv::cuda::GpuMat &frame);
+  void retrieve(cv::Mat &frame);
 };

@@ -22,6 +22,18 @@ protected:
   void TearDown() override { mycam.reset(); }
 };
 
+TEST_F(CameraTest, RetrieveGpuMat) {
+  cv::cuda::GpuMat frame;
+  mycam->retrieve(frame);
+  ASSERT_FALSE(frame.empty());
+}
+
+TEST_F(CameraTest, RetrieveCpuMat) {
+  cv::Mat frame;
+  mycam->retrieve(frame);
+  ASSERT_FALSE(frame.empty());
+}
+
 TEST_F(CameraTest, RetrieveMatType) {
   cv::cuda::GpuMat frame;
   mycam->retrieve(frame);
