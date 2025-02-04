@@ -13,15 +13,26 @@ public:
   std::future<Data> get_future() { return promise.get_future(); };
 };
 
-template <typename I, typename O> class Task {
-  I request_;
-  //   std::promise<O> output_promise;
-  //
-public:
-  void set_request(I &&request) { request_ = std::move(request); }
-  [[__nodiscard__]] I get_request() { return std::move(request_); }
+template <typename Data, typename ResponseType> class Task {
+  Data data_;
 
-  void set_response(O &&response) {}
-  [[__nodiscard__]] O get_response() {}
-  // void set_response(O const &response) {}
+public:
+  explicit Task() = delete;
+
+  template <typename... Args>
+  explicit Task(Args &&...data) : data_(std::forward<Data>(data)...) {}
+
+  void take(Data &item) {
+    item = std::move(data_); // prevent copy
+  }
+
+  void set_response(ResponseType &&response) {
+    response_promise_.set_value(std::forward<ResponseType>(response));
+  }
+  [[__nodiscard__]] std::future<ResponseType> get_response() {
+    return response_promise_.get_future();
+  }
+
+private:
+  std::promise<ResponseType> response_promise_;
 };
