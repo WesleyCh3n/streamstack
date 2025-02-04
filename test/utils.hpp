@@ -11,3 +11,6 @@ using Unique = std::unique_ptr<int>;
 using Vec = std::vector<int>;
 using Empty = void *;
 
+inline bool mat_eq(const cv::Mat &a, const cv::Mat &b) {
+  return std::equal(a.begin<uchar>(), a.end<uchar>(), b.begin<uchar>());
+}
