@@ -14,7 +14,7 @@ TEST(DataPipeTest, EnqueueMat) {
       pipe.try_enqueue(Task<cv::Mat, Empty>(cv::Mat::ones(5, 5, CV_8UC3))));
 }
 
-TEST(DataPipeTest, DequeueTaskVec) {
+TEST(DataPipeTest, DequeueTaskOfVecIsSame) {
   using TaskData = Task<Vec, Empty>;
 
   Vec enq_vec{1, 2, 3, 4}, deq_vec{};
@@ -31,7 +31,7 @@ TEST(DataPipeTest, DequeueTaskVec) {
   ASSERT_EQ(before, deq_vec.data());
 }
 
-TEST(DataPipeTest, DequeueTaskMat) {
+TEST(DataPipeTest, DequeueTaskOfMatIsSame) {
   using TaskData = Task<cv::Mat, Empty>;
 
   const cv::Mat mat{cv::Mat::ones(5, 5, CV_8UC3)};

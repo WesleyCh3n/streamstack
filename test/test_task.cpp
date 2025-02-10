@@ -4,23 +4,23 @@
 
 class TaskTest : public testing::Test {};
 
-TEST_F(TaskTest, CtorData) { Task<int, Empty> task(1); }
+TEST_F(TaskTest, CtorSetData) { Task<int, Empty> task(1); }
 
-TEST_F(TaskTest, CtorDataInt) {
+TEST_F(TaskTest, CtorSetIntData) {
   int input{1}, output{0};
   Task<int, Empty> task(input);
   task.take(output);
   ASSERT_EQ(output, 1);
 }
 
-TEST_F(TaskTest, CtorDataNullptr) {
+TEST_F(TaskTest, CtorSetNullData) {
   Unique input{nullptr}, output{nullptr};
   Task<Unique, Empty> task(nullptr);
   task.take(output);
   ASSERT_EQ(output, nullptr);
 }
 
-TEST_F(TaskTest, TakeDataValidate) {
+TEST_F(TaskTest, TakeDataValueIsSame) {
   Unique input{std::make_unique<int>(10)}, output(nullptr);
   Task<Unique, Empty> task(input);
   ASSERT_EQ(input, nullptr);
@@ -29,7 +29,7 @@ TEST_F(TaskTest, TakeDataValidate) {
   ASSERT_EQ(*output, 10);
 }
 
-TEST_F(TaskTest, GetRequestUniquePtrOwnership) {
+TEST_F(TaskTest, TakeDataUniquePtrAddressIsSame) {
   Unique before{std::make_unique<int>(10)}, after{nullptr};
   auto before_addr = before.get(); // address of the original pointer
   Task<Unique, Empty> task(before);
@@ -40,7 +40,7 @@ TEST_F(TaskTest, GetRequestUniquePtrOwnership) {
   ASSERT_EQ(after.get(), before_addr);
 }
 
-TEST_F(TaskTest, GetRequestVectorOwnership) {
+TEST_F(TaskTest, TakeDataVectorAddressIsSame) {
   Vec before{0, 1, 2}, after;
   auto before_addr = before.data(); // address of the original pointer
   Task<Vec, Empty> task(before);
@@ -73,7 +73,7 @@ TEST_F(TaskTest, SetResponseMultiple) {
       std::future_error);
 }
 
-TEST_F(TaskTest, SetResponseValidateValue) {
+TEST_F(TaskTest, GetResponseValueIsSame) {
   Task<Empty, Unique> task(nullptr);
   task.set_response(std::make_unique<int>(2));
   auto f = task.get_response();
